@@ -63,58 +63,58 @@ repeat_pause = None
 property_ids = None
 include_err_msg = False
 
-if environ.has_key('OPC_MODE'):         opc_mode = environ['OPC_MODE']
-if environ.has_key('OPC_CLASS'):        opc_class = environ['OPC_CLASS']
-if environ.has_key('OPC_CLIENT'):       client_name = environ['OPC_CLIENT']
-if environ.has_key('OPC_HOST'):         opc_host = environ['OPC_HOST']
-if environ.has_key('OPC_SERVER'):       opc_server = environ['OPC_SERVER']
-if environ.has_key('OPC_GATE_HOST'):    open_host = environ['OPC_GATE_HOST']
-if environ.has_key('OPC_GATE_PORT'):    open_port = environ['OPC_GATE_PORT']
-if environ.has_key('OPC_TIMEOUT'):      timeout = int(environ['OPC_TIMEOUT'])
+if 'OPC_MODE' in os.environ:         opc_mode = environ['OPC_MODE']
+if 'OPC_CLASS' in os.environ:        opc_class = environ['OPC_CLASS']
+if 'OPC_CLIENT' in os.environ:       client_name = environ['OPC_CLIENT']
+if 'OPC_HOST' in os.environ:         opc_host = environ['OPC_HOST']
+if 'OPC_SERVER' in os.environ:       opc_server = environ['OPC_SERVER']
+if 'OPC_GATE_HOST' in os.environ:    open_host = environ['OPC_GATE_HOST']
+if 'OPC_GATE_PORT' in os.environ:    open_port = environ['OPC_GATE_PORT']
+if 'OPC_TIMEOUT' in os.environ:      timeout = int(environ['OPC_TIMEOUT'])
 
 # FUNCTION: Print comand line usage summary
 
 def usage():
-   print 'OpenOPC Command Line Client', OpenOPC.__version__
-   print 'Copyright (c) 2007-2015 Barry Barnreiter (barrybb@gmail.com)'
-   print ''
-   print 'Usage:  opc [OPTIONS] [ACTION] [ITEM|PATH...]'
-   print ''
-   print 'Actions:'
-   print '  -r, --read                 Read ITEM values (default action)'
-   print '  -w, --write                Write values to ITEMs (use ITEM=VALUE)'
-   print '  -p, --properties           View properties of ITEMs'
-   print '  -l, --list                 List items at specified PATHs (tree browser)'
-   print '  -f, --flat                 List all ITEM names (flat browser)'
-   print '  -i, --info                 Display OPC server information'
-   print '  -q, --servers              Query list of available OPC servers'
-   print '  -S, --sessions             List sessions in OpenOPC Gateway Service'
-   print ''
-   print 'Options:'
-   print '  -m MODE, --mode=MODE       Protocol MODE (dcom, open) (default: OPC_MODE)'
-   print '  -C CLASS,--class=CLASS     OPC Automation CLASS (default: OPC_CLASS)'
-   print '  -n NAME, --name=NAME       Set OPC Client NAME (default: OPC_CLIENT)'
-   print '  -h HOST, --host=HOST       DCOM OPC HOST (default: OPC_HOST)'
-   print '  -s SERV, --server=SERVER   DCOM OPC SERVER (default: OPC_SERVER)'
-   print '  -H HOST, --gate-host=HOST  OpenOPC Gateway HOST (default: OPC_GATE_HOST)'
-   print '  -P PORT, --gate-port=PORT  OpenOPC Gateway PORT (default: OPC_GATE_PORT)'
-   print ''
-   print '  -F FUNC, --function=FUNC   Read FUNCTION to use (sync, async)'
-   print '  -c SRC,  --source=SOURCE   Set data SOURCE for reads (cache, device, hybrid)'
-   print '  -g SIZE, --size=SIZE       Group tags into SIZE items per transaction'
-   print '  -z MSEC, --pause=MSEC      Sleep MSEC milliseconds between transactions'
-   print '  -u MSEC, --update=MSEC     Set update rate for group to MSEC milliseconds'
-   print '  -t MSEC, --timeout=MSEC    Set read timeout to MSEC mulliseconds'
-   print ''
-   print '  -o FMT,  --output=FORMAT   Output FORMAT (table, values, pairs, csv, html)'
-   print '  -L SEC,  --repeat=SEC      Loop ACTION every SEC seconds until stopped'
-   print '  -y ID,   --id=ID,...       Retrieve only specific Property IDs'
-   print '  -a STR,  --append=STR,...  Append STRINGS to each input item name'
-   print '  -x N     --rotate=N        Rotate output orientation in groups of N values'
-   print '  -v,      --verbose         Verbose mode showing all OPC function calls'
-   print '  -e,      --errors          Include descriptive error message strings'
-   print '  -R,      --recursive       List items recursively when browsing tree'
-   print '  -,       --pipe            Pipe item/value list from standard input'
+   print('OpenOPC Command Line Client'+ OpenOPC.__version__)
+   print('Copyright (c) 2007-2015 Barry Barnreiter (barrybb@gmail.com)')
+   print('')
+   print('Usage:  opc [OPTIONS] [ACTION] [ITEM|PATH...]')
+   print('')
+   print('Actions:')
+   print('  -r, --read                 Read ITEM values (default action)')
+   print('  -w, --write                Write values to ITEMs (use ITEM=VALUE)')
+   print('  -p, --properties           View properties of ITEMs')
+   print('  -l, --list                 List items at specified PATHs (tree browser)')
+   print('  -f, --flat                 List all ITEM names (flat browser)')
+   print('  -i, --info                 Display OPC server information')
+   print('  -q, --servers              Query list of available OPC servers')
+   print('  -S, --sessions             List sessions in OpenOPC Gateway Service')
+   print('')
+   print('Options:')
+   print('  -m MODE, --mode=MODE       Protocol MODE (dcom, open) (default: OPC_MODE)')
+   print('  -C CLASS,--class=CLASS     OPC Automation CLASS (default: OPC_CLASS)')
+   print('  -n NAME, --name=NAME       Set OPC Client NAME (default: OPC_CLIENT)')
+   print('  -h HOST, --host=HOST       DCOM OPC HOST (default: OPC_HOST)')
+   print('  -s SERV, --server=SERVER   DCOM OPC SERVER (default: OPC_SERVER)')
+   print('  -H HOST, --gate-host=HOST  OpenOPC Gateway HOST (default: OPC_GATE_HOST)')
+   print('  -P PORT, --gate-port=PORT  OpenOPC Gateway PORT (default: OPC_GATE_PORT)')
+   print('')
+   print('  -F FUNC, --function=FUNC   Read FUNCTION to use (sync, async)')
+   print('  -c SRC,  --source=SOURCE   Set data SOURCE for reads (cache, device, hybrid)')
+   print('  -g SIZE, --size=SIZE       Group tags into SIZE items per transaction')
+   print('  -z MSEC, --pause=MSEC      Sleep MSEC milliseconds between transactions')
+   print('  -u MSEC, --update=MSEC     Set update rate for group to MSEC milliseconds')
+   print('  -t MSEC, --timeout=MSEC    Set read timeout to MSEC mulliseconds')
+   print('')
+   print('  -o FMT,  --output=FORMAT   Output FORMAT (table, values, pairs, csv, html)')
+   print('  -L SEC,  --repeat=SEC      Loop ACTION every SEC seconds until stopped')
+   print('  -y ID,   --id=ID,...       Retrieve only specific Property IDs')
+   print('  -a STR,  --append=STR,...  Append STRINGS to each input item name')
+   print('  -x N     --rotate=N        Rotate output orientation in groups of N values')
+   print('  -v,      --verbose         Verbose mode showing all OPC function calls')
+   print('  -e,      --errors          Include descriptive error message strings')
+   print('  -R,      --recursive       List items recursively when browsing tree')
+   print('  -,       --pipe            Pipe item/value list from standard input')
 
 # Helper class for handling signals (i.e. Ctrl-C)
 
@@ -342,7 +342,7 @@ if len(argv[1:]) == 0 or argv[1] == '/?' or argv[1] == '--help':
    exit()
 
 if opc_server == '' and action not in ('servers', 'sessions'):
-   print 'OPC server name missing: use -s option or set OPC_SERVER environment variable'
+   print('OPC server name missing: use -s option or set OPC_SERVER environment variable'
    exit()
 
 if data_source in ('cache', 'hybrid') and read_function == 'async' and update_rate == None and repeat_pause != None:
@@ -364,14 +364,14 @@ if pipe:
 
    tags = [line[0] for line in tags_nested if len(line) > 0]
    if len(tags) == 0:
-      print 'Input stream must contain ITEMs (one per line)'
+      print('Input stream must contain ITEMs (one per line)')
       exit()
       
    if action == 'write':
       try:
          tag_value_pairs = [(item[0], item[1]) for item in tags_nested]
       except IndexError:
-         print 'Write input must be in ITEM,VALUE (CSV) format'
+         print('Write input must be in ITEM,VALUE (CSV) format'
          exit()
 
 # Tag list passed via command line arguments
@@ -386,7 +386,7 @@ else:
       elif len([t for t in tags if t.find('=') != -1]) == len(tags):
          tag_value_pairs = [t.split('=') for t in tags]
       else:
-         print 'Write arguments must be supplied in ITEM=VALUE or ITEM VALUE format'
+         print('Write arguments must be supplied in ITEM=VALUE or ITEM VALUE format'
          exit()
 
 if len(append) > 0:
@@ -396,7 +396,7 @@ if property_ids != None:
    try:
       property_ids = [int(p) for p in property_ids.split(',')]
    except ValueError:
-      print 'Property ids must be numeric'
+      print('Property ids must be numeric'
       exit()
    
 if action in ('read','write') and not pipe and len(tags) == 0:
@@ -423,10 +423,10 @@ signal.signal(signal.SIGTERM,sh)
 # ACTION: List active sessions in OpenOPC service
 
 if action == 'sessions':
-   print '  %-38s %-18s %-18s' % ('Remote Client', 'Start Time', 'Last Transaction')
+   print('  %-38s %-18s %-18s' % ('Remote Client', 'Start Time', 'Last Transaction')
    try:
       for guid, host, init_time, tx_time in OpenOPC.get_sessions(open_host, open_port):
-         print '  %-38s %-18s %-18s'  % (host, time2str(init_time), time2str(tx_time))
+         print('  %-38s %-18s %-18s'  % (host, time2str(init_time), time2str(tx_time))
    except:
       error_msg = sys.exc_info()[1]
       print "Cannot connect to OpenOPC service at %s:%s - %s" % (open_host, open_port, error_msg)
@@ -524,7 +524,7 @@ if action == 'read':
             com_connected = False
             
       except (Pyro.errors.ConnectionClosedError, Pyro.errors.ProtocolError), error_msg:
-         print 'Gateway Service: %s' % error_msg
+         print('Gateway Service: %s' % error_msg
          success = False
          pyro_connected = False
 
@@ -553,7 +553,7 @@ if action == 'read':
          break
 
    if style == 'table' and num_columns == 0:
-      print '\nRead %d of %d items (%.2f seconds)' % (success_count, total_count, time.time() - start_time)
+      print('\nRead %d of %d items (%.2f seconds)') % (success_count, total_count, time.time() - start_time)
 
    try:
       opc.remove('test')
@@ -583,7 +583,7 @@ elif action == 'write':
 
    if style == 'table' and num_columns == 0:
       success = len([s for s in status if s[1] != 'Error'])
-      print '\nWrote %d of %d items (%.2f seconds)' % (success, len(tag_value_pairs), time.time() - start_time)
+      print('\nWrote %d of %d items (%.2f seconds)') % (success, len(tag_value_pairs), time.time() - start_time)
 
 # ACTION: List Items (Tree Browser)
    
