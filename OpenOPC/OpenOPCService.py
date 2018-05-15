@@ -27,7 +27,7 @@ try:
     import Pyro.protocol
     import Pyro.errors
 except ImportError:
-    print 'Pyro module required (http://pyro.sourceforge.net/)'
+    print('Pyro module required (http://pyro.sourceforge.net/)')
     exit()
 
 Pyro.config.PYRO_MULTITHREADED = 1
@@ -105,7 +105,7 @@ class opc(Pyro.core.ObjBase):
         init_times = self._init_times
         objects = self._opc_objects
         
-        hlist = [(k, hosts[k] if hosts.has_key(k) else '', init_times[k], objects[k].lastUsed) for k,v in reg.iteritems() if v == None]
+        hlist = [(k, hosts[k] if k in hosts else '', init_times[k], objects[k].lastUsed) for k,v in reg.iteritems() if v == None]
         return hlist
 
     def force_close(self, guid):
