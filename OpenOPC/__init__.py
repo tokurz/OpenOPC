@@ -170,7 +170,7 @@ class client():
             self._opc = win32com.client.gencache.EnsureDispatch(c, 0)
             self.opc_class = c
             break
-         except pythoncom.com_error, err:
+         except pythoncom.com_error as err:
             if i == len(opc_class_list)-1:
                error_msg = 'Dispatch: %s' % self._get_error_str(err)
                raise OPCError, error_msg
@@ -224,7 +224,7 @@ class client():
          try:
             if self.trace: self.trace('Connect(%s,%s)' % (s, opc_host))
             self._opc.Connect(s, opc_host)
-         except pythoncom.com_error, err:
+         except pythoncom.com_error as  err:
             if len(opc_server_list) == 1:
                error_msg = 'Connect: %s' % self._get_error_str(err)
                raise OPCError, error_msg
@@ -270,7 +270,7 @@ class client():
       try:
          self.remove(self.groups())
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'Disconnect: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -364,7 +364,7 @@ class client():
 
          try:
             errors = opc_items.Remove(len(server_handles)-1, server_handles)
-         except pythoncom.com_error, err:
+         except pythoncom.com_error as err:
             error_msg = 'RemoveItems: %s' % self._get_error_str(err)
             raise OPCError, error_msg
 
@@ -409,7 +409,7 @@ class client():
                try:
                   if self.trace: self.trace('AddGroup()')
                   opc_group = opc_groups.Add()
-               except pythoncom.com_error, err:
+               except pythoncom.com_error as err:
                   error_msg = 'AddGroup: %s' % self._get_error_str(err)
                   raise OPCError, error_msg
                sub_group = group
@@ -428,7 +428,7 @@ class client():
                   try:
                      if self.trace: self.trace('AddGroup(%s)' % sub_group)
                      opc_group = opc_groups.Add(sub_group)
-                  except pythoncom.com_error, err:
+                  except pythoncom.com_error as err:
                      error_msg = 'AddGroup: %s' % self._get_error_str(err)
                      raise OPCError, error_msg
                   self._groups[str(group)] = len(tag_groups)
@@ -502,7 +502,7 @@ class client():
                    
                    try:
                       values, errors, qualities, timestamps = opc_group.SyncRead(data_source, len(server_handles)-1, server_handles)
-                   except pythoncom.com_error, err:
+                   except pythoncom.com_error as err:
                       error_msg = 'SyncRead: %s' % self._get_error_str(err)
                       raise OPCError, error_msg
 
@@ -526,7 +526,7 @@ class client():
 
                   try:
                      opc_group.AsyncRefresh(data_source, self._tx_id)
-                  except pythoncom.com_error, err:
+                  except pythoncom.com_error as err:
                      error_msg = 'AsyncRefresh: %s' % self._get_error_str(err)
                      raise OPCError, error_msg
 
@@ -593,11 +593,11 @@ class client():
                   if self.trace: self.trace('RemoveGroup(%s)' % opc_group.Name)
                   opc_groups.Remove(opc_group.Name)
 
-               except pythoncom.com_error, err:
+               except pythoncom.com_error as err:
                   error_msg = 'RemoveGroup: %s' % self._get_error_str(err)
                   raise OPCError, error_msg
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'read: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -822,7 +822,7 @@ class client():
 
             opc_groups.Remove(opc_group.Name)
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'write: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -871,7 +871,7 @@ class client():
                   try:
                      if self.trace: self.trace('RemoveGroup(%s)' % sub_group)
                      errors = opc_groups.Remove(sub_group)
-                  except pythoncom.com_error, err:
+                  except pythoncom.com_error as err:
                      error_msg = 'RemoveGroup: %s' % self._get_error_str(err)
                      raise OPCError, error_msg
                      
@@ -881,7 +881,7 @@ class client():
                   del(self._group_server_handles[sub_group])
                del(self._groups[group])
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'remove: %s' % self._get_error_str(err)
          raise OPCError, error_msg
       
@@ -974,7 +974,7 @@ class client():
             
             for p in tag_properties: yield p
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'properties: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -1087,7 +1087,7 @@ class client():
                      if not node in nodes: yield node
                      nodes[node] = True
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'list: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -1106,7 +1106,7 @@ class client():
          servers = [s for s in servers if s != None]
          return servers
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'servers: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
@@ -1146,7 +1146,7 @@ class client():
 
          return info_list
 
-      except pythoncom.com_error, err:
+      except pythoncom.com_error as err:
          error_msg = 'info: %s' % self._get_error_str(err)
          raise OPCError, error_msg
 
