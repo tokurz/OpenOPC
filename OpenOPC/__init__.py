@@ -15,7 +15,7 @@ import socket
 import re
 import Queue
 
-__version__ = '1.2.0'
+__version__ = '1.3.1'
 
 current_client = None
 
