@@ -190,7 +190,7 @@ def output(data, style = 'table', value_idx = 1):
             pad_length.append(len(max([to_str(row[i]) for row in data], key=len)) + 5)
          pad_length.append(0)
    else:
-      raise TypeError, "output(): 'data' parameter must be a list or a generator"
+      raise TypeError "output(): 'data' parameter must be a list or a generator"
 
    if style == 'html':
       write('<table border=1>\n')
