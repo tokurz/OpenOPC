@@ -475,7 +475,7 @@ if action == 'read':
       opc_read = opc.read
             
    if verbose:
-      def trace(msg): print msg
+      def trace(msg): print(msg)
       opc.set_trace(trace)
 
    success_count = 0
