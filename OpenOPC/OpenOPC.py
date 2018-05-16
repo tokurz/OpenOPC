@@ -606,14 +606,14 @@ class client():
 
       tags_list, single, valid = type_check(tags)
       if not valid:
-         raise TypeError, "read(): 'tags' parameter must be a string or a list of strings"
+         raise TypeError("read(): 'tags' parameter must be a string or a list of strings")
 
       num_health_tags = len([t for t in tags_list if t[:1] == '@'])
       num_opc_tags = len([t for t in tags_list if t[:1] != '@'])
 
       if num_health_tags > 0:
          if num_opc_tags > 0:
-            raise TypeError, "read(): system health and OPC tags cannot be included in the same group"
+            raise TypeError("read(): system health and OPC tags cannot be included in the same group")
          results = self._read_health(tags)
       else:
          results = self.iread(tags, group, size, pause, source, update, timeout, sync, include_error, rebuild)
