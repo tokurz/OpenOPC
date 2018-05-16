@@ -422,15 +422,15 @@ signal.signal(signal.SIGTERM,sh)
 
 # ACTION: List active sessions in OpenOPC service
 
-if action == 'sessions':
-   print('%-38s %-18s %-18s' % ('Remote Client', 'Start Time', 'Last Transaction'))
-   try:
-      for guid, host, init_time, tx_time in OpenOPC.get_sessions(open_host, open_port):
-         print('%-38s %-18s %-18s'  % (host, time2str(init_time), time2str(tx_time))
-   except Exception:
-      error_msg = sys.exc_info()[1]
-      print("Cannot connect to OpenOPC service at %s:%s - %s" % (open_host, open_port, error_msg))
-   exit()
+#if action == 'sessions':
+ #  print('%-38s %-18s %-18s' % ('Remote Client', 'Start Time', 'Last Transaction'))
+  # try:
+   #   for guid, host, init_time, tx_time in OpenOPC.get_sessions(open_host, open_port):
+    #     print('%-38s %-18s %-18s'  % (host, time2str(init_time), time2str(tx_time))
+   #except Exception:
+   #   error_msg = sys.exc_info()[1]
+    #  print("Cannot connect to OpenOPC service at %s:%s - %s" % (open_host, open_port, error_msg))
+   #exit()
    
 # Connect to OpenOPC service (Open mode)
 
