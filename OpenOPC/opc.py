@@ -528,7 +528,7 @@ if action == 'read':
          success = False
          pyro_connected = False
 
-      except TypeError, error_msg:
+      except TypeError as error_msg:
          if opc_mode == 'open': error_msg = error_msg[0]
          print(error_msg)
          break
