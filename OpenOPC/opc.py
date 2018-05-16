@@ -427,17 +427,17 @@ if action == 'sessions':
    try:
       for guid, host, init_time, tx_time in OpenOPC.get_sessions(open_host, open_port):
          print('  %-38s %-18s %-18s'  % (host, time2str(init_time), time2str(tx_time))
-   except:
+   except Exception:
       error_msg = sys.exc_info()[1]
       print("Cannot connect to OpenOPC service at %s:%s - %s" % (open_host, open_port, error_msg))
-      exit()
+   exit()
    
 # Connect to OpenOPC service (Open mode)
 
 if opc_mode == 'open':
    try:
       opc = OpenOPC.open_client(open_host, open_port)
-   except:
+   except Exception:
       error_msg = sys.exc_info()[1]
       print("Cannot connect to OpenOPC Gateway Service at %s:%s - %s" % (open_host, open_port, error_msg))
       exit()
