@@ -430,7 +430,7 @@ if action == 'sessions':
    except:
       error_msg = sys.exc_info()[1]
       print("Cannot connect to OpenOPC service at %s:%s - %s" % (open_host, open_port, error_msg))
-   exit()
+      exit()
    
 # Connect to OpenOPC service (Open mode)
 
