@@ -308,33 +308,33 @@ for o, a in opts:
 # Check validity of command line options
 
 if num_columns > 0 and style in ('values', 'pairs'):
-   print "'%s' style format may not be used with rotate" % style
+   print("'%s' style format may not be used with rotate" % style)
    exit()
    
 if opc_mode not in ('open', 'dcom'):
-   print "'%s' is not a valid protocol mode (options: dcom, open)" % opc_mode
+   print("'%s' is not a valid protocol mode (options: dcom, open)" % opc_mode)
    exit()
 
 if opc_mode == 'dcom' and not OpenOPC.win32com_found:
-   print "win32com modules required when using DCOM protocol mode (http://pywin32.sourceforge.net/)"
+   print("win32com modules required when using DCOM protocol mode (http://pywin32.sourceforge.net/)")
    exit()
 
 if opc_mode == 'open' and not pyro_found:
-   print "Pyro module required when using Open protocol mode (http://pyro.sourceforge.net)"
+   print("Pyro module required when using Open protocol mode (http://pyro.sourceforge.net)")
    exit()
 
 if style not in ('table', 'values', 'pairs', 'csv', 'html'):
-   print "'%s' is not a valid style format (options: table, values, pairs, csv, html)" % style
+   print("'%s' is not a valid style format (options: table, values, pairs, csv, html)" % style)
    exit()
 
 if read_function not in ('sync', 'async'):
-   print "'%s' is not a valid read function (options: sync, async)" % read_function
+   print("'%s' is not a valid read function (options: sync, async)" % read_function)
    exit()
 else:
    sync = (read_function == 'sync')
    
 if data_source not in ('cache', 'device', 'hybrid'):
-   print "'%s' is not a valid data source mode (options: cache, device, hybrid)" % data_source
+   print("'%s' is not a valid data source mode (options: cache, device, hybrid)" % data_source)
    exit()
 
 if len(argv[1:]) == 0 or argv[1] == '/?' or argv[1] == '--help':
