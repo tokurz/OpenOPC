@@ -613,7 +613,7 @@ class client():
 
       if num_health_tags > 0:
          if num_opc_tags > 0:
-            raise TypeError, "read(): system health and OPC tags cannot be included in the same group"
+            raise TypeError("read(): system health and OPC tags cannot be included in the same group")
          results = self._read_health(tags)
       else:
          results = self.iread(tags, group, size, pause, source, update, timeout, sync, include_error, rebuild)
