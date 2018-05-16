@@ -13,7 +13,7 @@ import types
 import string
 import socket
 import re
-import Queue
+import queue
 
 __version__ = '1.3.1'
 
