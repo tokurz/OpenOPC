@@ -409,7 +409,7 @@ class client():
                try:
                   if self.trace: self.trace('AddGroup()')
                   opc_group = opc_groups.Add()
-               except pythoncom.com_error aserr:
+               except pythoncom.com_error as err:
                   error_msg = 'AddGroup: %s' % self._get_error_str(err)
                   raise OPCError(error_msg)
                sub_group = group
