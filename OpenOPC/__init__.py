@@ -536,7 +536,7 @@ class client():
                   while tx_id != self._tx_id:
                      now = time.time() * 1000
                      if now - start > timeout:
-                        raise TimeoutError, 'Callback: Timeout waiting for data'
+                        raise TimeoutError('Callback: Timeout waiting for data')
 
                      if self.callback_queue.empty():
                         pythoncom.PumpWaitingMessages()
