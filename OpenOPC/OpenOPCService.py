@@ -23,14 +23,12 @@ import threading
 import OpenOPC
 
 try:
-    import Pyro.core
-    import Pyro.protocol
-    import Pyro.errors
+    import Pyro4.core
+    import Pyro4.protocol
+    import Pyro4.errors
 except ImportError:
-    print('Pyro module required (http://pyro.sourceforge.net/)')
+    print('Pyro4 module required (http://pyro.sourceforge.net/)')
     exit()
-
-Pyro.config.PYRO_MULTITHREADED = 1
 
 opc_class = OpenOPC.OPC_CLASS
 opc_gate_host = None
@@ -84,13 +82,13 @@ def inactive_cleanup(exit_event):
                 OpenOPC.close_session(oid, host=opc_gate_host, port=opc_gate_port)                
                 time.sleep(1)
 
-class opc_client(Pyro.core.ObjBase, OpenOPC.client):
+class opc_client(Pyro4.core.URI, OpenOPC.client):
     def __init__(self, remote_ip=''):
-        Pyro.core.ObjBase.__init__(self)
+        Pyro4.core.URI.__init__(self)
         OpenOPC.client.__init__(self)
         self.remote_ip = remote_ip
 
-class opc(Pyro.core.ObjBase):
+class opc(Pyro4.core.URI):
     def __init__(self):
         Pyro.core.ObjBase.__init__(self)
         self._remote_hosts = {}
