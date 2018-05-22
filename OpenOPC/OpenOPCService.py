@@ -40,6 +40,7 @@ def getvar(env_var):
     try:
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\\CurrentControlSet\\Control\Session Manager\Environment',0,winreg.KEY_READ)
         value, valuetype = winreg.QueryValueEx(key, env_var)
+        print(value)
         return value
     except:
         return None
@@ -71,7 +72,8 @@ def inactive_cleanup(exit_event):
         else:
             try:
                 all_sessions = OpenOPC.get_sessions(host=opc_gate_host, port=opc_gate_port)
-            except Pyro.errors.ProtocolError:
+            except Pyro4.errors.ProtocolError as error:
+                print(error)
                 all_sessions = []
             if len(all_sessions) > max_clients:
                 stale_sessions = sorted(all_sessions, key=lambda s: s[3])[:-max_clients]
@@ -81,15 +83,15 @@ def inactive_cleanup(exit_event):
                 OpenOPC.close_session(oid, host=opc_gate_host, port=opc_gate_port)                
                 time.sleep(1)
 
-class opc_client(Pyro4.core.URI, OpenOPC.client):
+class opc_client(Pyro4.core.Daemon, OpenOPC.client):
     def __init__(self, remote_ip=''):
-        Pyro4.core.URI.__init__(self)
+        Pyro4.core.Daemon.__init__(self)
         OpenOPC.client.__init__(self)
         self.remote_ip = remote_ip
 
-class opc(Pyro4.core.URI):
+class opc(Pyro4.core.Daemon):
     def __init__(self):
-        Pyro.core.URI.__init__(self)
+        Pyro4.core.Daemon.__init__(self)
         self._remote_hosts = {}
         self._opc_objects = {}
         self._init_times = {}
@@ -129,7 +131,7 @@ class opc(Pyro4.core.URI):
         self._opc_objects[opc_obj.GUID()] = opc_obj
         self._init_times[opc_obj.GUID()] =  time.time()
 
-        return Pyro.core.getProxyForURI(uri)
+        return Pyro4.core.Deamon(uri)
 
     def release_client(self, obj):
         """Release a OpenOPC client instance in the Pyro server"""
@@ -158,32 +160,35 @@ class OpcService(win32serviceutil.ServiceFramework):
 
     def SvcDoRun(self):
         servicemanager.LogInfoMsg('\n\nStarting service\nOPC_GATE_HOST=%s\nOPC_GATE_PORT=%d\nOPC_MAX_CLIENTS=%d\nOPC_INACTIVE_TIMEOUT=%d' % ('0.0.0.0' if opc_gate_host is None else opc_gate_host, opc_gate_port, max_clients, inactive_timeout))
+        try:
+            exit_event = threading.Event()
+            p = threading.Thread(target=inactive_cleanup, args=(exit_event,))
+            p.start()
+            
+            daemon = Pyro4.core.Daemon(host=opc_gate_host, port=opc_gate_port)
+            daemon.register(opc_client())
+            daemon.requestLoop()
 
-        exit_event = threading.Event()
-        p = threading.Thread(target=inactive_cleanup, args=(exit_event,))
-        p.start()
+            stop_pending = False
 
-        daemon = Pyro4.core.Daemon(host=opc_gate_host, port=opc_gate_port)
-        daemon.connect(opc(), "opc")
-
-        stop_pending = False
-
-        while True:
-            if not stop_pending and win32event.WaitForSingleObject(self.hWaitStop, 0) == win32event.WAIT_OBJECT_0:
-                exit_event.set()
-                stop_pending = True
-            elif stop_pending and not exit_event.is_set():
-                break
-    
-            socks = daemon.getServerSockets()
-            ins,outs,exs = select.select(socks,[],[],1)
-            for s in socks:
-                if s in ins:
-                    daemon.handleRequests()
+            while True:
+                if not stop_pending and win32event.WaitForSingleObject(self.hWaitStop, 0) == win32event.WAIT_OBJECT_0:
+                    exit_event.set()
+                    stop_pending = True
+                elif stop_pending and not exit_event.is_set():
                     break
+        
+                socks = daemon.getServerSockets()
+                ins,outs,exs = select.select(socks,[],[],1)
+                for s in socks:
+                    if s in ins:
+                        daemon.handleRequests()
+                        break
 
-        p.join()
-        daemon.shutdown()
+            p.join()
+            daemon.shutdown()
+        except Exception as error:
+            servicemanager.LogInfoMsg(str(error))
         
 if __name__ == '__main__':
     if len(sys.argv) == 1:
@@ -193,7 +198,9 @@ if __name__ == '__main__':
             servicemanager.Initialize('zzzOpenOPCService', evtsrc_dll)
             servicemanager.StartServiceCtrlDispatcher()
         except win32service.error as details:
-            if details[0] == winerror.ERROR_FAILED_SERVICE_CONTROLLER_CONNECT:
+            print(details)
+            servicemanager.LogInfoMsg(details)
+            if details == winerror.ERROR_FAILED_SERVICE_CONTROLLER_CONNECT:
                 win32serviceutil.usage()
     else:
         win32serviceutil.HandleCommandLine(OpcService)
