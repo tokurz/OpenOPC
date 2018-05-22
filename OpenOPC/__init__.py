@@ -53,7 +53,6 @@ else:
 
 # OPC Constants
 
-opc_class = None
 SOURCE_CACHE = 1
 SOURCE_DEVICE = 2
 OPC_STATUS = (0, 'Running', 'Failed', 'NoConfig', 'Suspended', 'Test')
@@ -63,6 +62,7 @@ OPC_QUALITY = ('Bad', 'Uncertain', 'Unknown', 'Good')
 OPC_CLASS = 'Matrikon.OPC.Automation;Graybox.OPC.DAWrapper;HSCOPC.Automation;RSI.OPCAutomation;OPC.Automation'
 OPC_SERVER = 'Hci.TPNServer;HwHsc.OPCServer;opc.deltav.1;AIM.OPC.1;Yokogawa.ExaopcDAEXQ.1;OSI.DA.1;OPC.PHDServerDA.1;Aspen.Infoplus21_DA.1;National Instruments.OPCLabVIEW;RSLinx OPC Server;KEPware.KEPServerEx.V4;Matrikon.OPC.Simulation;Prosys.OPC.Simulation;CCOPC.XMLWrapper.1;OPC.SimaticHMI.CoRtHmiRTm.1'
 OPC_CLIENT = 'OpenOPC'
+opc_class = OPC_CLASS
 
 def quality_str(quality_bits):
    """Convert OPC quality bits to a descriptive string"""
@@ -124,7 +124,7 @@ def get_sessions(host='localhost', port=7766):
    server_obj = Pyro4.Proxy("PYRO:opc@{0}:{1}".format(host, port))
    return server_obj.get_clients()
 
-def open_client(host=None, port=7766):
+def open_client(host='localhost', port=7766):
    """Connect to the specified OpenOPC Gateway Service"""
    
    import Pyro4.core
@@ -154,10 +154,12 @@ class client():
       self.callback_queue = Queue()
 
       pythoncom.CoInitialize()
-      if 'OPC_CLASS' in os.environ:
-         opc_class = os.environ['OPC_CLASS']
-      else:
-         opc_class = OPC_CLASS
+
+      if opc_class == None:
+         if 'OPC_CLASS' in os.environ:
+            opc_class = os.environ['OPC_CLASS']
+         else:
+            opc_class = OPC_CLASS
 
       opc_class_list = opc_class.split(';')
 

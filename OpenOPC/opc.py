@@ -20,7 +20,6 @@ import types
 import datetime
 import re, time, csv
 import OpenOPC
-
 try:
    import Pyro4
 except ImportError:
@@ -38,14 +37,11 @@ if os.name == 'nt':
    opc_mode = 'dcom'
 else:
    opc_mode = 'open'
-
-opc_class = OpenOPC.OPC_CLASS
 client_name = OpenOPC.OPC_CLIENT
 opc_host = 'localhost'
 opc_server = OpenOPC.OPC_SERVER
 open_host = 'localhost'
 open_port = 7766
-
 action = 'read'
 style = 'table'
 append = ''
@@ -63,6 +59,7 @@ repeat = 1
 repeat_pause = None
 property_ids = None
 include_err_msg = False
+opc_class = OpenOPC.OPC_CLASS
 
 if 'OPC_MODE' in os.environ:         opc_mode = environ['OPC_MODE']
 if 'OPC_CLASS' in os.environ:        opc_class = environ['OPC_CLASS']
