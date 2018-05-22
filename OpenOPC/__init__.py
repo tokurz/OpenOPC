@@ -15,7 +15,7 @@ import socket
 import re
 import Queue
 
-__version__ = '1.2.0'
+__version__ = '1.3.2'
 
 current_client = None
 
@@ -147,7 +147,7 @@ class client():
    def __init__(self, opc_class=None, client_name=None):
       """Instantiate OPC automation class"""
 
-      self.callback_queue = Queue.Queue()
+      self.callback_queue = queue.Queue()
 
       pythoncom.CoInitialize()
 
