@@ -13,7 +13,7 @@ import win32service
 import win32event
 import servicemanager
 import winerror
-import _winreg
+import winreg
 import select
 import socket
 import os
@@ -24,7 +24,6 @@ import OpenOPC
 
 try:
     import Pyro4.core
-    import Pyro4.protocol
     import Pyro4.errors
 except ImportError:
     print('Pyro4 module required (http://pyro.sourceforge.net/)')
@@ -39,8 +38,8 @@ max_clients = 25
 def getvar(env_var):
     """Read system enviornment variable from registry"""
     try:
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\\CurrentControlSet\\Control\Session Manager\Environment',0,_winreg.KEY_READ)
-        value, valuetype = _winreg.QueryValueEx(key, env_var)
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\\CurrentControlSet\\Control\Session Manager\Environment',0,winreg.KEY_READ)
+        value, valuetype = winreg.QueryValueEx(key, env_var)
         return value
     except:
         return None
@@ -90,7 +89,7 @@ class opc_client(Pyro4.core.URI, OpenOPC.client):
 
 class opc(Pyro4.core.URI):
     def __init__(self):
-        Pyro.core.ObjBase.__init__(self)
+        Pyro.core.URI.__init__(self)
         self._remote_hosts = {}
         self._opc_objects = {}
         self._init_times = {}
@@ -164,7 +163,7 @@ class OpcService(win32serviceutil.ServiceFramework):
         p = threading.Thread(target=inactive_cleanup, args=(exit_event,))
         p.start()
 
-        daemon = Pyro.core.Daemon(host=opc_gate_host, port=opc_gate_port)
+        daemon = Pyro4.core.Daemon(host=opc_gate_host, port=opc_gate_port)
         daemon.connect(opc(), "opc")
 
         stop_pending = False
