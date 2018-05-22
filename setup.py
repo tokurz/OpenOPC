@@ -9,6 +9,6 @@ setup(name="OpenOPC",
   url='http://openopc.sourceforge.net',
   license='GPLv2',
   packages = find_packages(exclude=['ez_setup']),
-  install_requires=['Pyro','Pyro4'],
+  install_requires=['Pyro4'],
   zip_safe = False,
   )

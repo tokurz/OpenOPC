@@ -114,24 +114,21 @@ def exceptional(func, alt_return=None, alt_exceptions=(Exception,), final=None, 
 
 def get_sessions(host=None, port=7766):
    if host is None: host = 'localhost'
-   import Pyro.core
-   Pyro.core.initClient(banner = 0)
-   server_obj = Pyro.core.getProxyForURI("PYROLOC://%s:%s/opc" % (host, port))
+   import Pyro4.core
+   server_obj = Pyro4.Proxy("PYRO:opc@%s:%s" % (host, port))
    return server_obj.get_clients()
 
 def close_session(guid, host=None, port=7766):
    if host is None: host = 'localhost'
-   import Pyro.core
-   Pyro.core.initClient(banner = 0)
-   server_obj = Pyro.core.getProxyForURI("PYROLOC://%s:%s/opc" % (host, port))
+   import Pyro4.core
+   server_obj = Pyro4.Proxy("PYRO:opc@%s:%s" % (host, port))
    return server_obj.force_close(guid)
 
 def open_client(host='localhost', port=7766):
    """Connect to the specified OpenOPC Gateway Service"""
    
-   import Pyro.core
-   Pyro.core.initClient(banner=0)
-   server_obj = Pyro.core.getProxyForURI("PYROLOC://%s:%s/opc" % (host, port))
+   import Pyro4.core
+   server_obj = Pyro4.Proxy("PYRO:opc@%s:%s" % (host, port))
    return server_obj.create_client()
 
 class TimeoutError(Exception):
