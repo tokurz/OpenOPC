@@ -153,7 +153,7 @@ class client():
    def __init__(self, opc_class=None, client_name=None):
       """Instantiate OPC automation class"""
 
-      self.callback_queue = Queue.Queue()
+      self.callback_queue = queue.Queue()
 
       pythoncom.CoInitialize()
 
