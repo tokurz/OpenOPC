@@ -21,7 +21,7 @@ import re, time, csv
 import OpenOPC
 
 try:
-   import Pyro
+   import Pyro4
 except ImportError:
    pyro_found = False
 else:
