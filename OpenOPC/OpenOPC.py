@@ -30,7 +30,7 @@ if os.name == 'nt':
       import SystemHealth
       
       # Win32 variant types
-      vt = dict([(pythoncom.__dict__[vtype], vtype) for vtype in pythoncom.__dict__.keys() if vtype[:2] == "VT"])
+      vt = dict([(pythoncom.__dict__[vtype], vtype) for vtype in list(pythoncom.__dict__.keys()) if vtype[:2] == "VT"])
 
       # Allow gencache to create the cached wrapper objects
       win32com.client.gencache.is_readonly = False
@@ -68,7 +68,7 @@ def quality_str(quality_bits):
 def type_check(tags):
    """Perform a type check on a list of tags"""
    
-   if type(tags) in (types.ListType, types.TupleType):
+   if type(tags) in (list, tuple):
       single = False
    elif tags == None:
       tags = []
@@ -77,7 +77,7 @@ def type_check(tags):
       tags = [tags]
       single = True
 
-   if len([t for t in tags if type(t) not in types.StringTypes]) == 0:
+   if len([t for t in tags if type(t) not in str]) == 0:
       valid = True
    else:
       valid = False
@@ -124,10 +124,9 @@ def close_session(guid, host=None, port=7766):
    server_obj = Pyro4.Proxy("PYRO:opc@%s:%s" % (host, port))
    return server_obj.force_close(guid)
 
-
 def open_client(host='localhost', port=7766):
    """Connect to the specified OpenOPC Gateway Service"""
-   
+
    import Pyro4.core
    server_obj = Pyro4.Proxy("PYRO:opc@%s:%s" % (host, port))
    return server_obj.create_client()
@@ -262,6 +261,9 @@ class client():
       self._group_handles_tag = {}
       self._group_hooks = {}
 
+   def GUID(self):
+      return self._open_guid
+
    def close(self, del_object=True):
       """Disconnect from the currently connected OPC server"""
 
@@ -303,7 +305,7 @@ class client():
          valid_values = []
          client_handles = []
 
-         if not sub_group in self._group_handles_tag:
+         if sub_group not in self._group_handles_tag:
             self._group_handles_tag[sub_group] = {}
             n = 0
          elif len(self._group_handles_tag[sub_group]) > 0:
@@ -338,7 +340,7 @@ class client():
          server_handles_tmp = []
          valid_tags.pop(0)
 
-         if not sub_group in self._group_server_handles:
+         if sub_group not in self._group_server_handles:
             self._group_server_handles[sub_group] = {}
        
          for i, tag in enumerate(valid_tags):
@@ -568,7 +570,7 @@ class client():
                   value = None
                   quality = 'Error'
                   timestamp = None
-                  if include_error and not tag in  error_msgs:
+                  if include_error and tag not in error_msgs:
                      error_msgs[tag] = ''
 
                if single:
@@ -584,7 +586,7 @@ class client():
 
             if group == None:
                try:
-                  if not sync and opc_group in self._group_hooks:
+                  if not sync and opc_group.Name in self._group_hooks:
                      if self.trace: self.trace('CloseEvents(%s)' % opc_group.Name)
                      self._group_hooks[opc_group.Name].close()
 
@@ -679,18 +681,18 @@ class client():
 
       try:
          def _valid_pair(p):
-            if type(p) in (types.ListType, types.TupleType) and len(p) >= 2 and type(p[0]) in types.StringTypes:
+            if type(p) in (list, tuple) and len(p) >= 2 and type(p[0]) in str:
                return True
             else:
                return False
 
-         if type(tag_value_pairs) not in (types.ListType, types.TupleType):
+         if type(tag_value_pairs) not in (list, tuple):
             raise TypeError("write(): 'tag_value_pairs' parameter must be a (tag, value) tuple or a list of (tag,value) tuples")
 
          if tag_value_pairs == None:
             tag_value_pairs = ['']
             single = False
-         elif type(tag_value_pairs[0]) in types.StringTypes:
+         elif type(tag_value_pairs[0]) in str:
             tag_value_pairs = [tag_value_pairs]
             single = True
          else:
@@ -827,7 +829,7 @@ class client():
    def write(self, tag_value_pairs, size=None, pause=0, include_error=False):
       """Write list of (tag, value) pair(s) to the server"""
 
-      if type(tag_value_pairs) in (types.ListType, types.TupleType) and type(tag_value_pairs[0]) in (types.ListType, types.TupleType):
+      if type(tag_value_pairs) in (list, tuple) and type(tag_value_pairs[0]) in (list, tuple):
          single = False
       else:
          single = True
@@ -841,7 +843,7 @@ class client():
 
    def groups(self):
       """Return a list of active tag groups"""
-      return self._groups.keys()
+      return list(self._groups.keys())
 
    def remove(self, groups):
       """Remove the specified tag group(s)"""
@@ -849,7 +851,7 @@ class client():
       try:
          opc_groups = self._opc.OPCGroups
 
-         if type(groups) in types.StringTypes:
+         if type(groups) in str:
             groups = [groups]
             single = True
          else:
@@ -979,7 +981,7 @@ class client():
    def properties(self, tags, id=None):
       """Return list of property tuples (id, name, value) for the specified tag(s) """
 
-      if type(tags) not in (types.ListType, types.TupleType) and type(id) not in (types.NoneType, types.ListType, types.TupleType):
+      if type(tags) not in (list, tuple) and type(id) not in (type(None), list, tuple):
          single = True
       else:
          single = False
@@ -1016,7 +1018,7 @@ class client():
                browser.ShowLeafs(True)
 
                pattern = re.compile('^%s$' % wild2regex(path) , re.IGNORECASE)
-               matches = filter(pattern.search, browser)
+               matches = list(filter(pattern.search, browser))
                if include_type:  matches = [(x, node_type) for x in matches]
 
                for node in matches: yield node
@@ -1074,7 +1076,7 @@ class client():
                   lowest_level = False
                   node_type = 'Branch'
 
-               matches = filter(pattern.search, browser)
+               matches = list(filter(pattern.search, browser))
                
                if not lowest_level and recursive:
                   queue += [path_str + x + path_postfix for x in matches]
@@ -1082,7 +1084,7 @@ class client():
                   if lowest_level:  matches = [exceptional(browser.GetItemID,x)(x) for x in matches]
                   if include_type:  matches = [(x, node_type) for x in matches]
                   for node in matches:
-                     if not node in nodes: yield node
+                     if node not in nodes: yield node
                      nodes[node] = True
 
       except pythoncom.com_error as err:
@@ -1172,12 +1174,12 @@ class client():
          scode = exc[5]
 
          try:
-            opc_err_str = unicode(self._opc.GetErrorString(scode)).strip('\r\n')
+            opc_err_str = str(self._opc.GetErrorString(scode)).strip('\r\n')
          except:
             opc_err_str = None
 
          try:
-            com_err_str = unicode(pythoncom.GetScodeString(scode)).strip('\r\n')
+            com_err_str = str(pythoncom.GetScodeString(scode)).strip('\r\n')
          except:
             com_err_str = None
 
